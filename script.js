@@ -1,13 +1,39 @@
 const apiKey = "3fa16246d70211b92d1c182141c872fa";
 
+const nowPlayingMovies = document.querySelector("#btn-movies-latest");
+nowPlayingMovies.addEventListener("click", () => {
+    getMovies();
+});
+const popularMovies = document.querySelector("#btn-movies-popular");
+popularMovies.addEventListener("click", () => {
+    getMovies();
+});
+const upcomingMovies = document.querySelector("#btn-movies-upcoming");
+upcomingMovies.addEventListener("click", () => {
+    getMovies();
+});
+
+const getMovieCategory = () => {
+    if (popularMovies.checked) {
+        return "popular";
+    } else if (upcomingMovies.checked) {
+        return "upcoming";
+    } else {
+        return "now_playing";
+    }
+}
+
 const getMovies = () => {
+    const category = getMovieCategory();
+    console.log("Category: " + category);
     const language = document.querySelector("#language").value;
-    fetch("https://api.themoviedb.org/3/movie/popular?api_key=" + apiKey + "&language=" + language + "&page=1")
+    fetch("https://api.themoviedb.org/3/movie/" + category + "?api_key=" + apiKey + "&language=" + language + "&page=1")
         .then(response => response.json())
         .then(data => {
             console.log(data);
             const movies = data.results;
             const movieContainer = document.querySelector(".card-container");
+            movieContainer.innerHTML = "";
             movies.forEach(movie => {
                 const movieCard = createMovieCard(movie);
                 movieContainer.appendChild(movieCard);
