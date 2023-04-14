@@ -27,7 +27,7 @@ const getMovies = () => {
     const category = getMovieCategory();
     console.log("Category: " + category);
     const language = document.querySelector("#language").value;
-    fetch("https://api.themoviedb.org/3/movies/" + category + "?api_key=" + apiKey + "&language=" + language + "&page=1")
+    fetch("https://api.themoviedb.org/3/movie/" + category + "?api_key=" + apiKey + "&language=" + language + "&page=1")
         .then(response => response.json())
         .then(data => {
             console.log(data);
