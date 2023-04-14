@@ -1,0 +1,39 @@
+table, th, td, tr {
+    border-bottom: 1px solid black;
+    font-size: smaller;
+}
+
+tr {
+    border-bottom: 1px solid black;
+}
+
+p {
+    font-size: smaller;
+}
+
+table {
+    width: 100%;
+}
+
+.cast-name {
+    text-align: left;
+}
+
+.cast-character {
+    text-align: right;
+}
+
+.display-none {
+    display: none;
+}
+
+.card-title {
+    margin-bottom: 1rem;
+    margin-top: 0.75rem;
+}
+
+.card-text {
+    max-height: 15rem;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
