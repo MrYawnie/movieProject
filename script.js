@@ -8,16 +8,16 @@ const popularMovies = document.querySelector("#btn-movies-popular");
 popularMovies.addEventListener("click", () => {
     getMovies();
 });
-const upcomingMovies = document.querySelector("#btn-movies-upcoming");
-upcomingMovies.addEventListener("click", () => {
+const topRatedMovies = document.querySelector("#btn-movies-top-rated");
+topRatedMovies.addEventListener("click", () => {
     getMovies();
 });
 
 const getMovieCategory = () => {
     if (popularMovies.checked) {
         return "popular";
-    } else if (upcomingMovies.checked) {
-        return "upcoming";
+    } else if (topRatedMovies.checked) {
+        return "top_rated";
     } else {
         return "now_playing";
     }
@@ -27,7 +27,7 @@ const getMovies = () => {
     const category = getMovieCategory();
     console.log("Category: " + category);
     const language = document.querySelector("#language").value;
-    fetch("https://api.themoviedb.org/3/movie/" + category + "?api_key=" + apiKey + "&language=" + language + "&page=1")
+    fetch("https://api.themoviedb.org/3/movies/" + category + "?api_key=" + apiKey + "&language=" + language + "&page=1")
         .then(response => response.json())
         .then(data => {
             console.log(data);
