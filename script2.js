@@ -43,35 +43,82 @@ const createMovieCard = (movie) => {
     btnGroup.setAttribute("role", "group");
     btnGroup.setAttribute("aria-label", "Basic example");
     
-    const btn1 = document.createElement("button");
-    btn1.classList.add("btn");
-    btn1.classList.add("btn-primary");
-    btn1.textContent = "Info";
-    btn1.addEventListener("click", () => {
+    const btn1 = document.createElement("input");
+    btn1.classList.add("btn-check");
+    btn1.setAttribute("type", "radio");
+    btn1.setAttribute("name", "radio-" + movie.id);
+    btn1.setAttribute("id", "radio1-" + movie.id);
+    btn1.setAttribute("autocomplete", "off");
+    btn1.setAttribute("checked", "");
+
+    const btn1Label = document.createElement("label");
+    btn1Label.classList.add("btn");
+    btn1Label.classList.add("btn-outline-primary");
+    btn1Label.textContent = "Info";
+    btn1Label.setAttribute("for", "radio1-" + movie.id);
+
+    btn1Label.addEventListener("click", () => {
         description.classList.remove("display-none");
         const castTable = movieCard.querySelector(".cast-table");
         castTable.classList.add("display-none");
+        btn1.setAttribute("checked", "");
+        btn2.removeAttribute("checked");
+        btn3.removeAttribute("checked");
     });
     
-    const btn2 = document.createElement("button");
-    btn2.classList.add("btn");
-    btn2.classList.add("btn-primary");
-    btn2.textContent = "Cast";
+    const btn2 = document.createElement("input");
+    btn2.classList.add("btn-check");
+    btn2.setAttribute("type", "radio");
+    btn2.setAttribute("name", "radio-" + movie.id);
+    btn2.setAttribute("id", "radio2-" + movie.id);
+    btn2.setAttribute("autocomplete", "off");
+
+    const btn2Label = document.createElement("label");
+    btn2Label.classList.add("btn");
+    btn2Label.classList.add("btn-outline-primary");
+    btn2Label.textContent = "Cast";
+    btn2Label.setAttribute("for", "radio2-" + movie.id);
+
     // add listener to button
-    btn2.addEventListener("click", () => {
+    btn2Label.addEventListener("click", () => {
         const castTable = movieCard.querySelector(".cast-table");
         castTable.classList.remove("display-none");
         description.classList.add("display-none");
+        btn1.removeAttribute("checked");
+        btn2.setAttribute("checked", "");
+        btn3.removeAttribute("checked");
+
     });
     
-    const btn3 = document.createElement("button");
-    btn3.classList.add("btn");
-    btn3.classList.add("btn-primary");
-    btn3.textContent = "Button 3";
+    const btn3 = document.createElement("input");
+    btn3.classList.add("btn-check");
+    btn3.setAttribute("type", "radio");
+    btn3.setAttribute("name", "radio-" + movie.id);
+    btn3.setAttribute("id", "radio3-" + movie.id);
+    btn3.setAttribute("autocomplete", "off");
+
+    const btn3Label = document.createElement("label");
+    btn3Label.classList.add("btn");
+    btn3Label.classList.add("btn-outline-primary");
+    btn3Label.textContent = "Something";
+    btn3Label.setAttribute("for", "radio3-" + movie.id);
+
+    // add listener to button
+    btn3Label.addEventListener("click", () => {
+        description.classList.add("display-none");
+        const castTable = movieCard.querySelector(".cast-table");
+        castTable.classList.add("display-none");
+        btn1.removeAttribute("checked");
+        btn2.removeAttribute("checked");
+        btn3.setAttribute("checked", "");
+    });
     
     btnGroup.appendChild(btn1);
+    btnGroup.appendChild(btn1Label);
     btnGroup.appendChild(btn2);
+    btnGroup.appendChild(btn2Label);
     btnGroup.appendChild(btn3);
+    btnGroup.appendChild(btn3Label);
     body.appendChild(btnGroup);
     
     const title = document.createElement("h4");
@@ -101,10 +148,21 @@ const getCast = (movie) => {
         console.log(data);
         const cast = data.cast;
         // only count up to 10 cast members
-        const castCount = cast.length > 10 ? 10 : cast.length;
+        const castCount = cast.length > 12 ? 12 : cast.length;
         const castContainer = document.createElement("table");
         castContainer.classList.add("cast-table");
         castContainer.classList.add("display-none");
+        const castHeader = document.createElement("tr");
+        const castNameHeader = document.createElement("th");
+        castNameHeader.classList.add("cast-name");
+        castNameHeader.textContent = "Name";
+        const castCharacterHeader = document.createElement("th");
+        castCharacterHeader.classList.add("cast-character");
+        castCharacterHeader.textContent = "Character";
+        castHeader.appendChild(castNameHeader);
+        castHeader.appendChild(castCharacterHeader);
+        castContainer.appendChild(castHeader);
+
         for (let i = 0; i < castCount; i++) {
           const castMember = cast[i];
           const castRow = createCastCard(castMember);
