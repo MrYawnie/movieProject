@@ -264,39 +264,36 @@ const createContentCard = (content) => {
     return contentCard;
 }
 
-const getCast = (movie) => {
+const getCast = async (movie) => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
     console.log(type);
 
-    return fetch("https://api.themoviedb.org/3/" + type + movie.id + "/credits?api_key=" + apiKey)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            const cast = data.cast;
-            // only count up to 10 cast members
-            const castCount = cast.length > 12 ? 12 : cast.length;
-            const castContainer = document.createElement("table");
-            castContainer.classList.add("cast-table");
-            castContainer.classList.add("display-none");
-            const castHeader = document.createElement("tr");
-            const castNameHeader = document.createElement("th");
-            castNameHeader.classList.add("cast-name");
-            castNameHeader.textContent = "Name";
-            const castCharacterHeader = document.createElement("th");
-            castCharacterHeader.classList.add("cast-character");
-            castCharacterHeader.textContent = "Character";
-            castHeader.appendChild(castNameHeader);
-            castHeader.appendChild(castCharacterHeader);
-            castContainer.appendChild(castHeader);
-
-            for (let i = 0; i < castCount; i++) {
-                const castMember = cast[i];
-                const castRow = createCastCard(castMember);
-                castContainer.appendChild(castRow);
-            }
-            return castContainer;
-        });
+    const response = await fetch("https://api.themoviedb.org/3/" + type + movie.id + "/credits?api_key=" + apiKey);
+    const data_1 = await response.json();
+    console.log(data_1);
+    const cast = data_1.cast;
+    // only count up to 10 cast members
+    const castCount = cast.length > 12 ? 12 : cast.length;
+    const castContainer = document.createElement("table");
+    castContainer.classList.add("cast-table");
+    castContainer.classList.add("display-none");
+    const castHeader = document.createElement("tr");
+    const castNameHeader = document.createElement("th");
+    castNameHeader.classList.add("cast-name");
+    castNameHeader.textContent = "Name";
+    const castCharacterHeader = document.createElement("th");
+    castCharacterHeader.classList.add("cast-character");
+    castCharacterHeader.textContent = "Character";
+    castHeader.appendChild(castNameHeader);
+    castHeader.appendChild(castCharacterHeader);
+    castContainer.appendChild(castHeader);
+    for (let i = 0; i < castCount; i++) {
+        const castMember = cast[i];
+        const castRow = createCastCard(castMember);
+        castContainer.appendChild(castRow);
+    }
+    return castContainer;
 }
 
 const createCastCard = (castMember) => {
