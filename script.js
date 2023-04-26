@@ -62,6 +62,7 @@ movieType.addEventListener("click", () => {
     movieSection.classList.remove("display-none");
 });
 const tvType = document.querySelector("#btn-tv");
+
 tvType.addEventListener("click", () => {
     getContent();
     movieSection.classList.add("display-none");
@@ -153,14 +154,11 @@ const createContentCard = (content) => {
     const body = document.createElement("div");
     body.classList.add("card-body");
 
-    const releaseDate = document.createElement("p");
-    releaseDate.classList.add("card-text");
-    releaseDate.textContent = content.release_date;
-    body.appendChild(releaseDate);
 
     const btnGroup = document.createElement("div");
     btnGroup.classList.add("btn-group");
     btnGroup.classList.add("btn-group-sm");
+    btnGroup.classList.add("card-btn-group");
     btnGroup.setAttribute("role", "group");
     btnGroup.setAttribute("aria-label", "Basic example");
 
@@ -179,9 +177,12 @@ const createContentCard = (content) => {
     btn1Label.setAttribute("for", "radio1-" + content.id);
 
     btn1Label.addEventListener("click", () => {
-        description.classList.remove("display-none");
-        const castTable = contentCard.querySelector(".cast-table");
-        castTable.classList.add("display-none");
+        const descriptionContainer = contentCard.querySelector(".description-container");
+        const castContainer = contentCard.querySelector(".cast-container");
+        const seasonsContainer = contentCard.querySelector(".seasons-container");
+        descriptionContainer.classList.remove("display-none");
+        castContainer.classList.add("display-none");
+        seasonsContainer.classList.add("display-none");
         btn1.setAttribute("checked", "");
         btn2.removeAttribute("checked");
         btn3.removeAttribute("checked");
@@ -202,9 +203,12 @@ const createContentCard = (content) => {
 
     // add listener to button
     btn2Label.addEventListener("click", () => {
-        const castTable = contentCard.querySelector(".cast-table");
-        castTable.classList.remove("display-none");
-        description.classList.add("display-none");
+        const descriptionContainer = contentCard.querySelector(".description-container");
+        const castContainer = contentCard.querySelector(".cast-container");
+        const seasonsContainer = contentCard.querySelector(".seasons-container");
+        castContainer.classList.remove("display-none");
+        descriptionContainer.classList.add("display-none");
+        seasonsContainer.classList.add("display-none");
         btn1.removeAttribute("checked");
         btn2.setAttribute("checked", "");
         btn3.removeAttribute("checked");
@@ -221,14 +225,21 @@ const createContentCard = (content) => {
     const btn3Label = document.createElement("label");
     btn3Label.classList.add("btn");
     btn3Label.classList.add("btn-outline-primary");
-    btn3Label.textContent = "Something";
+    if (type === "tv/") {
+        btn3Label.textContent = "Seasons";
+    } else {
+        btn3Label.textContent = "Something";
+    }
     btn3Label.setAttribute("for", "radio3-" + content.id);
 
     // add listener to button
     btn3Label.addEventListener("click", () => {
-        description.classList.add("display-none");
-        const castTable = contentCard.querySelector(".cast-table");
-        castTable.classList.add("display-none");
+        const descriptionContainer = contentCard.querySelector(".description-container");
+        const castContainer = contentCard.querySelector(".cast-container");
+        const seasonsContainer = contentCard.querySelector(".seasons-container");
+        descriptionContainer.classList.add("display-none");
+        castContainer.classList.add("display-none");
+        seasonsContainer.classList.remove("display-none");
         btn1.removeAttribute("checked");
         btn2.removeAttribute("checked");
         btn3.setAttribute("checked", "");
@@ -242,6 +253,7 @@ const createContentCard = (content) => {
         btn3,
         btn3Label
     );
+
     body.appendChild(btnGroup);
 
     const titleElement = document.createElement("h4");
@@ -249,19 +261,70 @@ const createContentCard = (content) => {
     titleElement.textContent = title;
     body.appendChild(titleElement);
 
-    const description = document.createElement("p");
-    description.classList.add("card-text");
-    description.textContent = content.overview;
-    body.appendChild(description);
-
-    contentCard.appendChild(body);
-
+    // get description and append to body
+    createDescription(content).then(descriptionContainer => {
+        body.appendChild(descriptionContainer);
+    });
+    
     // get cast list and append to body
     getCast(content).then(castContainer => {
         body.appendChild(castContainer);
     });
 
+    if (type === "tv/") {
+        getSeasonList(content).then(seasonsContainer => {
+            body.appendChild(seasonsContainer);
+        });
+    } else {
+        /* createGenres(content).then(genresContainer => {
+            body.appendChild(genresContainer);
+        }); */
+    }
+
+    // append body to content card
+    contentCard.appendChild(body);
+    
     return contentCard;
+}
+
+const createDescription = async (content) => {
+    const language = document.querySelector("#language").value;
+    const tv = document.getElementById("btn-tv");
+    const type = tv.checked ? "tv/" : "movie/";
+    const response = await fetch("https://api.themoviedb.org/3/" + type + content.id + "?api_key=" + apiKey + "&language=" + language);
+    const data = await response.json();
+
+    
+    const container = document.createElement("div");
+    container.classList.add("description-container");
+    
+    const descTable = document.createElement("table");
+    descTable.classList.add("desc-table");
+    const imdbRating = document.createElement("tr");
+    imdbRating.innerHTML = "<td class='align-left'>IMDB Rating</td><td class='align-right'>" + data.vote_average + "</td>";
+    
+    if (type == "movie/") {
+        const releaseDate = document.createElement("tr");
+        releaseDate.innerHTML = "<td class='align-left'>Release Date</td><td class='align-right'>" + data.release_date + "</td>";
+        const runtime = document.createElement("tr");
+        runtime.innerHTML = "<td class='align-left'>Runtime</td><td class='align-right'>" + data.runtime + " minutes</td>";
+        descTable.append(imdbRating, releaseDate, runtime);
+    } else {
+        const firstAirDate = document.createElement("tr");
+        firstAirDate.innerHTML = "<td class='align-left'>First Air Date</td><td class='align-right'>" + data.first_air_date + "</td>";
+        const lastAirDate = document.createElement("tr");
+        lastAirDate.innerHTML = "<td class='align-left'>Last Air Date</td><td class='align-right'>" + data.last_air_date + "</td>";
+        const episodeRuntime = document.createElement("tr");
+        episodeRuntime.innerHTML = "<td class='align-left'>Episode Runtime</td><td class='align-right'>" + data.episode_run_time[0] + " minutes</td>";
+        descTable.append(imdbRating, firstAirDate, lastAirDate, episodeRuntime);
+    }
+    
+    const description = document.createElement("p");
+    description.classList.add("card-text");
+    description.textContent = content.overview;
+    container.append(descTable, description);
+
+    return container;
 }
 
 const getCast = async (movie) => {
@@ -275,24 +338,29 @@ const getCast = async (movie) => {
     const cast = data_1.cast;
     // only count up to 10 cast members
     const castCount = cast.length > 12 ? 12 : cast.length;
-    const castContainer = document.createElement("table");
-    castContainer.classList.add("cast-table");
+    const castContainer = document.createElement("div");
+    castContainer.classList.add("cast-container");
     castContainer.classList.add("display-none");
+    const castTable = document.createElement("table");
+    castTable.classList.add("cast-table");
     const castHeader = document.createElement("tr");
     const castNameHeader = document.createElement("th");
     castNameHeader.classList.add("cast-name");
+    castNameHeader.classList.add("align-left");
     castNameHeader.textContent = "Name";
     const castCharacterHeader = document.createElement("th");
     castCharacterHeader.classList.add("cast-character");
+    castCharacterHeader.classList.add("align-right");
     castCharacterHeader.textContent = "Character";
     castHeader.appendChild(castNameHeader);
     castHeader.appendChild(castCharacterHeader);
-    castContainer.appendChild(castHeader);
+    castTable.appendChild(castHeader);
     for (let i = 0; i < castCount; i++) {
         const castMember = cast[i];
         const castRow = createCastCard(castMember);
-        castContainer.appendChild(castRow);
+        castTable.appendChild(castRow);
     }
+    castContainer.appendChild(castTable);
     return castContainer;
 }
 
@@ -301,15 +369,65 @@ const createCastCard = (castMember) => {
     const castRow = document.createElement("tr");
     const castName = document.createElement("td");
     castName.classList.add("cast-name");
+    castName.classList.add("align-left");
     castName.textContent = castMember.name;
     const castCharacter = document.createElement("td");
     castCharacter.classList.add("cast-character");
+    castCharacter.classList.add("align-right");
     castCharacter.textContent = castMember.character;
 
     castRow.appendChild(castName);
     castRow.appendChild(castCharacter);
 
     return castRow;
+}
+
+const getSeasonList = async (tv) => {
+    const response = await fetch("https://api.themoviedb.org/3/tv/" + tv.id + "?api_key=" + apiKey);
+    const data_1 = await response.json();
+    console.log(data_1);
+    const seasonsContainer = document.createElement("div");
+    seasonsContainer.classList.add("seasons-container");
+    seasonsContainer.classList.add("display-none");
+    const seasonsTable = document.createElement("table");
+    seasonsTable.classList.add("seasons-table");
+    const seasonsHeader = document.createElement("tr");
+    const seasonNumberHeader = document.createElement("th");
+    seasonNumberHeader.classList.add("season-number");
+    seasonNumberHeader.textContent = "Season";
+    const seasonEpisodesHeader = document.createElement("th");
+    seasonEpisodesHeader.classList.add("season-episodes");
+    seasonEpisodesHeader.textContent = "Episodes";
+    seasonsHeader.appendChild(seasonNumberHeader);
+    seasonsHeader.appendChild(seasonEpisodesHeader);
+    seasonsTable.appendChild(seasonsHeader);
+    for (let i = 1; i <= data_1.number_of_seasons; i++) {
+        const season = i;
+        console.log(season);
+        const response = await fetch("https://api.themoviedb.org/3/tv/" + tv.id + "/season/" + season + "?api_key=" + apiKey);
+        const data_2 = await response.json();
+        console.log(data_2);
+
+        const seasonRow = createSeasonCard(data_2);
+        seasonsTable.appendChild(seasonRow);
+    }
+    seasonsContainer.appendChild(seasonsTable);
+    return seasonsContainer;
+}
+
+const createSeasonCard = (season) => {
+    const seasonRow = document.createElement("tr");
+    const seasonNumber = document.createElement("td");
+    seasonNumber.classList.add("season-number");
+    seasonNumber.textContent = season.season_number;
+    const seasonEpisodes = document.createElement("td");
+    seasonEpisodes.classList.add("season-episodes");
+    seasonEpisodes.textContent = season.episodes.length;
+
+    seasonRow.appendChild(seasonNumber);
+    seasonRow.appendChild(seasonEpisodes);
+
+    return seasonRow;
 }
 
 const changeLanguage = () => {

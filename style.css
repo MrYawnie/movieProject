@@ -15,25 +15,30 @@ table {
     width: 100%;
 }
 
-.cast-name {
-    text-align: left;
-}
-
-.cast-character {
-    text-align: right;
-}
-
 .display-none {
     display: none;
 }
 
 .card-title {
-    margin-bottom: 1rem;
-    margin-top: 0.75rem;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 .card-text {
     max-height: 15rem;
     overflow-y: auto;
     scroll-behavior: smooth;
+    margin-top: 10px;
+}
+
+.card-body {
+    padding: 10px;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
 }
