@@ -54,6 +54,24 @@ const search = () => {
         });
 }
 
+const getRecommendations = (content) => {
+    const tv = document.getElementById("btn-tv");
+    const type = tv.checked ? "tv/" : "movie/";
+
+    const language = document.querySelector("#language").value;
+    fetch("https://api.themoviedb.org/3/" + type + content.id + "/recommendations" + "?api_key=" + apiKey + "&language=" + language)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const results = data.results;
+            const resultContainer = document.querySelector(".card-container");
+            resultContainer.innerHTML = "";
+            results.forEach(result => {
+                const resultCard = createContentCard(result);
+                resultContainer.appendChild(resultCard);
+            });
+        });
+}
 
 const movieType = document.querySelector("#btn-movies");
 movieType.addEventListener("click", () => {
@@ -281,8 +299,20 @@ const createContentCard = (content) => {
         }); */
     }
 
+    const cardFooter = document.createElement("div");
+    cardFooter.classList.add("card-footer");
+    const recommendationsBtn = document.createElement("button");
+    recommendationsBtn.classList.add("btn");
+    recommendationsBtn.classList.add("btn-primary");
+    recommendationsBtn.classList.add("btn-sm");
+    recommendationsBtn.textContent = "Recommendations";
+    recommendationsBtn.addEventListener("click", () => {
+        getRecommendations(content);
+    });
+    cardFooter.appendChild(recommendationsBtn);
+
     // append body to content card
-    contentCard.appendChild(body);
+    contentCard.append(body, cardFooter);
     
     return contentCard;
 }
