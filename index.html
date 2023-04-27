@@ -53,12 +53,14 @@
                 aria-describedby="basic-addon1">
             <button class="btn btn-outline-primary" type="submit" id="search-button">Search</button>
         </div>
-        <div class="settings dropdown">
-            <select name="lang-id" id="language" onchange=changeLanguage()>
+        <div class="settings">
+            <select name="lang-id" id="language">
                 <option value="en-EN">English</option>
                 <option value="fi-FI">Finnish</option>
                 <option value="sv-SV">Swedish</option>
             </select>
+            <input type="checkbox" id="include-adult" name="include-adult" value="true">
+            <label for="adult">Show adult content</label>
         </div>
         <div class="card-container d-flex flex-wrap justify-content-center pt-2">
             <!-- Cards will generate here -->

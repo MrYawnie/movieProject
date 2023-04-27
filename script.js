@@ -18,6 +18,8 @@ const page3 = document.querySelector("#page3");
 const page4 = document.querySelector("#page4");
 const page5 = document.querySelector("#page5");
 
+const languageSelector = document.querySelector("#language");
+
 // arrays for event listeners below, to be used in a loop
 const pages = [
     "page1",
@@ -57,9 +59,12 @@ const search = () => {
     const searchValue = searchInput.value;
     searchInput.value = "";
 
+    const include_adult = document.querySelector("#include-adult").checked;
+    console.log("Include adult: " + include_adult);
+
     const language = document.querySelector("#language").value;
     // fetch search results
-    fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=" + apiKey + "&language=" + language + "&query=" + searchValue + "&page=1&include_adult=false")
+    fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=" + apiKey + "&language=" + language + "&query=" + searchValue + "&page=1&include_adult=" + include_adult)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -83,8 +88,11 @@ const getRecommendations = (content) => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
 
+    const include_adult = document.querySelector("#include-adult").checked;
+    console.log("Include adult: " + include_adult);
+
     const language = document.querySelector("#language").value;
-    fetch("https://api.themoviedb.org/3/" + type + content.id + "/recommendations" + "?api_key=" + apiKey + "&language=" + language)
+    fetch("https://api.themoviedb.org/3/" + type + content.id + "/recommendations" + "?api_key=" + apiKey + "&language=" + language + "&page=1&include_adult=" + include_adult)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -147,10 +155,13 @@ const getContent = () => {
     }
     console.log("Page: " + page);
 
+    const include_adult = document.querySelector("#include-adult").checked;
+    console.log("Include adult: " + include_adult);
+
     console.log("Category: " + category);
     const language = document.querySelector("#language").value;
     // fetch content based on type (movie or tv), category (latest, popular, top-rated), and page number.
-    fetch("https://api.themoviedb.org/3/" + type + category + "?api_key=" + apiKey + "&language=" + language + "&page=" + page)
+    fetch("https://api.themoviedb.org/3/" + type + category + "?api_key=" + apiKey + "&language=" + language + "&page=" + page + "&include_adult=" + include_adult)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -642,5 +653,8 @@ const changeLanguage = () => {
     movieContainer.innerHTML = "";
     getContent();
 }
+
+// add event listener to the language selector
+languageSelector.addEventListener("change", changeLanguage);
 
 getContent();
