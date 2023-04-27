@@ -1,17 +1,3 @@
-// TODO:
-// - Add more info to cards
-//     - Release date
-//     - Genre
-//     - season count
-//     - episode count
-//     - Runtime
-//     - Rating
-//     - Cast
-//     - Crew
-//     - Trailer
-//     - Reviews
-//     - Similar movies
-
 const apiKey = "3fa16246d70211b92d1c182141c872fa";
 const movieSection = document.querySelector("#movie-type-selector");
 const tvSection = document.querySelector("#tv-type-selector");
@@ -25,6 +11,14 @@ const latestTV = document.querySelector("#btn-tv-latest");
 const searchButton = document.querySelector("#search-button");
 const searchInput = document.querySelector("#search-input");
 const movieType = document.querySelector("#btn-movies");
+
+const pages = [
+    "page1",
+    "page2",
+    "page3",
+    "page4",
+    "page5",
+]
 
 const page1 = document.querySelector("#page1");
 const page2 = document.querySelector("#page2");
@@ -122,13 +116,6 @@ tvType.addEventListener("click", () => {
     tvSection.classList.remove("display-none");
 });
 
-const pages = [
-    "page1",
-    "page2",
-    "page3",
-    "page4",
-    "page5",
-]
 
 pages.forEach(page => {
     const pageButton = document.querySelector("#" + page);
@@ -217,8 +204,7 @@ const createContentCard = (content) => {
     const title = type === "tv/" ? content.name : content.title;
 
     const contentCard = document.createElement("div");
-    contentCard.classList.add("card");
-    contentCard.classList.add("m-2");
+    contentCard.classList.add("card", "m-2");
     contentCard.style.width = "16rem";
 
     const poster = document.createElement("img");
@@ -232,9 +218,7 @@ const createContentCard = (content) => {
 
 
     const btnGroup = document.createElement("div");
-    btnGroup.classList.add("btn-group");
-    btnGroup.classList.add("btn-group-sm");
-    btnGroup.classList.add("card-btn-group");
+    btnGroup.classList.add("btn-group", "btn-group-sm", "card-btn-group");
     btnGroup.setAttribute("role", "group");
     btnGroup.setAttribute("aria-label", "Card button group");
 
@@ -247,8 +231,7 @@ const createContentCard = (content) => {
     btn1.setAttribute("checked", "");
 
     const btn1Label = document.createElement("label");
-    btn1Label.classList.add("btn");
-    btn1Label.classList.add("btn-outline-primary");
+    btn1Label.classList.add("btn", "btn-outline-primary");
     btn1Label.textContent = "Info";
     btn1Label.setAttribute("for", "radio1-" + content.id);
 
@@ -272,8 +255,7 @@ const createContentCard = (content) => {
     btn2.setAttribute("autocomplete", "off");
 
     const btn2Label = document.createElement("label");
-    btn2Label.classList.add("btn");
-    btn2Label.classList.add("btn-outline-primary");
+    btn2Label.classList.add("btn", "btn-outline-primary");
     btn2Label.textContent = "Cast";
     btn2Label.setAttribute("for", "radio2-" + content.id);
 
@@ -299,8 +281,7 @@ const createContentCard = (content) => {
     btn3.setAttribute("autocomplete", "off");
 
     const btn3Label = document.createElement("label");
-    btn3Label.classList.add("btn");
-    btn3Label.classList.add("btn-outline-primary");
+    btn3Label.classList.add("btn", "btn-outline-primary");
     if (type === "tv/") {
         btn3Label
         btn3Label.textContent = "Seasons";
@@ -356,38 +337,26 @@ const createContentCard = (content) => {
     if (type === "tv/") {
         const seasonsContainer = createSeasons(content);
         body.appendChild(seasonsContainer);
-    } else {
-        /* createGenres(content).then(genresContainer => {
-            body.appendChild(genresContainer);
-        }); */
     }
 
     const cardFooter = document.createElement("div");
-    cardFooter.classList.add("card-footer");
-    cardFooter.classList.add("d-flex");
-    cardFooter.classList.add("justify-content-around");
+    cardFooter.classList.add("card-footer", "d-flex", "justify-content-around");
 
     const footerBtnGroup = document.createElement("div");
-    footerBtnGroup.classList.add("btn-group");
-    footerBtnGroup.classList.add("btn-group-sm");
-    footerBtnGroup.classList.add("footer-btn-group");
+    footerBtnGroup.classList.add("btn-group", "btn-group-sm", "footer-btn-group");
     footerBtnGroup.setAttribute("role", "group");
     footerBtnGroup.setAttribute("aria-label", "Footer Button Group");
 
 
     const recommendationsBtn = document.createElement("button");
-    recommendationsBtn.classList.add("btn");
-    recommendationsBtn.classList.add("btn-outline-warning");
-    recommendationsBtn.classList.add("btn-sm");
+    recommendationsBtn.classList.add("btn", "btn-outline-warning", "btn-sm");
     recommendationsBtn.textContent = "Similar content";
     recommendationsBtn.addEventListener("click", () => {
         getRecommendations(content);
     });
 
     const trailerBtn = document.createElement("button");
-    trailerBtn.classList.add("btn");
-    trailerBtn.classList.add("btn-outline-warning");
-    trailerBtn.classList.add("btn-sm");
+    trailerBtn.classList.add("btn", "btn-outline-warning", "btn-sm");
     trailerBtn.textContent = "Trailer";
 
     if (content.videos.results.length === 0) {
@@ -407,9 +376,7 @@ const createContentCard = (content) => {
 
     // create website button <-- removed, as I didn't like the look of it
     /* const websiteBtn = document.createElement("button");
-    websiteBtn.classList.add("btn");
-    websiteBtn.classList.add("btn-outline-primary");
-    websiteBtn.classList.add("btn-sm");
+    websiteBtn.classList.add("btn", "btn-outline-primary", "btn-sm");
     websiteBtn.textContent = "Website";
 
     if (content.homepage === "") {
@@ -460,12 +427,7 @@ const createDescription = (content) => {
     }
 
     const genresContainer = document.createElement("div");
-    genresContainer.classList.add("genres-container");
-    genresContainer.classList.add("d-flex");
-    genresContainer.classList.add("justify-content-center");
-    genresContainer.classList.add("gap-1");
-    genresContainer.classList.add("flex-wrap");
-    genresContainer.classList.add("mt-2");
+    genresContainer.classList.add("genres-container", "d-flex", "justify-content-center", "gap-1", "flex-wrap", "mt-2");
 
     const genres = content.genres;
     genres.forEach(genre => {
@@ -580,18 +542,15 @@ const createCast = (movie) => {
     // only count up to 10 cast members
     const castCount = cast.length > 12 ? 12 : cast.length;
     const castContainer = document.createElement("div");
-    castContainer.classList.add("cast-container");
-    castContainer.classList.add("display-none");
+    castContainer.classList.add("cast-container", "display-none");
     const castTable = document.createElement("table");
     castTable.classList.add("cast-table");
     const castHeader = document.createElement("tr");
     const castNameHeader = document.createElement("th");
-    castNameHeader.classList.add("cast-name");
-    castNameHeader.classList.add("align-left");
+    castNameHeader.classList.add("cast-name", "align-left");
     castNameHeader.textContent = "Name";
     const castCharacterHeader = document.createElement("th");
-    castCharacterHeader.classList.add("cast-character");
-    castCharacterHeader.classList.add("align-right");
+    castCharacterHeader.classList.add("cast-character", "align-right");
     castCharacterHeader.textContent = "Character";
     castHeader.appendChild(castNameHeader);
     castHeader.appendChild(castCharacterHeader);
@@ -609,12 +568,10 @@ const createCastCard = (castMember) => {
 
     const castRow = document.createElement("tr");
     const castName = document.createElement("td");
-    castName.classList.add("cast-name");
-    castName.classList.add("align-left");
+    castName.classList.add("cast-name", "align-left");
     castName.textContent = castMember.name;
     const castCharacter = document.createElement("td");
-    castCharacter.classList.add("cast-character");
-    castCharacter.classList.add("align-right");
+    castCharacter.classList.add("cast-character", "align-right");
     castCharacter.textContent = castMember.character;
 
     castRow.appendChild(castName);
@@ -628,18 +585,15 @@ const createSeasons = (content) => {
     console.log(season);
 
     const seasonContainer = document.createElement("div");
-    seasonContainer.classList.add("season-container");
-    seasonContainer.classList.add("display-none");
+    seasonContainer.classList.add("season-container", "display-none");
     const seasonTable = document.createElement("table");
     seasonTable.classList.add("season-table");
     const seasonHeader = document.createElement("tr");
     const seasonNameHeader = document.createElement("th");
-    seasonNameHeader.classList.add("season-name");
-    seasonNameHeader.classList.add("align-left");
+    seasonNameHeader.classList.add("season-name", "align-left");
     seasonNameHeader.textContent = "Name";
     const seasonEpisodeHeader = document.createElement("th");
-    seasonEpisodeHeader.classList.add("season-episode");
-    seasonEpisodeHeader.classList.add("align-right");
+    seasonEpisodeHeader.classList.add("season-episode", "align-right");
     seasonEpisodeHeader.textContent = "Episodes";
     seasonHeader.appendChild(seasonNameHeader);
     seasonHeader.appendChild(seasonEpisodeHeader);
@@ -659,12 +613,10 @@ const createSeasons = (content) => {
 const createSeasonCard = (seasonMember) => {
     const seasonRow = document.createElement("tr");
     const seasonName = document.createElement("td");
-    seasonName.classList.add("season-name");
-    seasonName.classList.add("align-left");
+    seasonName.classList.add("season-name", "align-left");
     seasonName.textContent = seasonMember.name;
     const seasonEpisode = document.createElement("td");
-    seasonEpisode.classList.add("season-episode");
-    seasonEpisode.classList.add("align-right");
+    seasonEpisode.classList.add("season-episode", "align-right");
     seasonEpisode.textContent = seasonMember.episode_count;
 
     seasonRow.appendChild(seasonName);
