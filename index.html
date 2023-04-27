@@ -35,7 +35,8 @@
                     autocomplete="off">
                 <label class="btn btn-outline-primary" for="btn-movies-top-rated">Top-rated</label>
             </div>
-            <div class="btn-group display-none" id="tv-type-selector" role="group" aria-label="Basic radio toggle button group">
+            <div class="btn-group display-none" id="tv-type-selector" role="group"
+                aria-label="Basic radio toggle button group">
                 <input type="radio" class="btn-check" name="btnradio-tv" id="btn-tv-latest" autocomplete="off" checked>
                 <label class="btn btn-outline-primary" for="btn-tv-latest">Airing today</label>
 
@@ -48,10 +49,11 @@
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">🔎</span>
-            <input type="text" class="form-control" id="search-input" placeholder="Search string" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" id="search-input" placeholder="Search string" aria-label="Username"
+                aria-describedby="basic-addon1">
             <button class="btn btn-outline-primary" type="submit" id="search-button">Search</button>
-          </div>
-        <div class="settings">
+        </div>
+        <div class="settings dropdown">
             <select name="lang-id" id="language" onchange=changeLanguage()>
                 <option value="en-EN">English</option>
                 <option value="fi-FI">Finnish</option>
@@ -60,6 +62,24 @@
         </div>
         <div class="card-container d-flex flex-wrap justify-content-center pt-2">
             <!-- Cards will generate here -->
+        </div>
+        <div class="footer">
+            <div class="btn-group mt-2" role="group" id="pages" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="page" id="page1" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="page1">1</label>
+
+                <input type="radio" class="btn-check" name="page" id="page2" autocomplete="off">
+                <label class="btn btn-outline-primary" for="page2">2</label>
+
+                <input type="radio" class="btn-check" name="page" id="page3" autocomplete="off">
+                <label class="btn btn-outline-primary" for="page3">3</label>
+
+                <input type="radio" class="btn-check" name="page" id="page4" autocomplete="off">
+                <label class="btn btn-outline-primary" for="page4">4</label>
+
+                <input type="radio" class="btn-check" name="page" id="page5" autocomplete="off">
+                <label class="btn btn-outline-primary" for="page5">5</label>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

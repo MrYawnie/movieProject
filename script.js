@@ -26,6 +26,12 @@ const searchButton = document.querySelector("#search-button");
 const searchInput = document.querySelector("#search-input");
 const movieType = document.querySelector("#btn-movies");
 
+const page1 = document.querySelector("#page1");
+const page2 = document.querySelector("#page2");
+const page3 = document.querySelector("#page3");
+const page4 = document.querySelector("#page4");
+const page5 = document.querySelector("#page5");
+
 const filterButtons = [
     "btn-movies-latest",
     "btn-movies-popular",
@@ -114,15 +120,50 @@ tvType.addEventListener("click", () => {
     tvSection.classList.remove("display-none");
 });
 
+// add event listeners to page buttons
+page1.addEventListener("click", () => {
+    getContent();
+});
+
+page2.addEventListener("click", () => {
+    getContent();
+});
+
+page3.addEventListener("click", () => {
+    getContent();
+});
+
+page4.addEventListener("click", () => {
+    getContent();
+});
+
+page5.addEventListener("click", () => {
+    getContent();
+});
+
 
 const getContent = () => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
     const category = type === "tv/" ? getTVCategory() : getMovieCategory();
+    
+    var page = 1;
+    if (page1.checked) {
+        page = 1;
+    } else if (page2.checked) {
+        page = 2;
+    } else if (page3.checked) {
+        page = 3;
+    } else if (page4.checked) {
+        page = 4;
+    } else if (page5.checked) {
+        page = 5;
+    }
+    console.log("Page: " + page);
 
     console.log("Category: " + category);
     const language = document.querySelector("#language").value;
-    fetch("https://api.themoviedb.org/3/" + type + category + "?api_key=" + apiKey + "&language=" + language + "&page=1")
+    fetch("https://api.themoviedb.org/3/" + type + category + "?api_key=" + apiKey + "&language=" + language + "&page=" + page)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -338,7 +379,7 @@ const createContentCard = (content) => {
 
     const recommendationsBtn = document.createElement("button");
     recommendationsBtn.classList.add("btn");
-    recommendationsBtn.classList.add("btn-outline-primary");
+    recommendationsBtn.classList.add("btn-outline-warning");
     recommendationsBtn.classList.add("btn-sm");
     recommendationsBtn.textContent = "Similar content";
     recommendationsBtn.addEventListener("click", () => {
@@ -347,7 +388,7 @@ const createContentCard = (content) => {
 
     const trailerBtn = document.createElement("button");
     trailerBtn.classList.add("btn");
-    trailerBtn.classList.add("btn-outline-primary");
+    trailerBtn.classList.add("btn-outline-warning");
     trailerBtn.classList.add("btn-sm");
     trailerBtn.textContent = "Trailer";
 
