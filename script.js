@@ -12,6 +12,13 @@ const searchButton = document.querySelector("#search-button");
 const searchInput = document.querySelector("#search-input");
 const movieType = document.querySelector("#btn-movies");
 
+const page1 = document.querySelector("#page1");
+const page2 = document.querySelector("#page2");
+const page3 = document.querySelector("#page3");
+const page4 = document.querySelector("#page4");
+const page5 = document.querySelector("#page5");
+
+// arrays for event listeners below, to be used in a loop
 const pages = [
     "page1",
     "page2",
@@ -19,12 +26,6 @@ const pages = [
     "page4",
     "page5",
 ]
-
-const page1 = document.querySelector("#page1");
-const page2 = document.querySelector("#page2");
-const page3 = document.querySelector("#page3");
-const page4 = document.querySelector("#page4");
-const page5 = document.querySelector("#page5");
 
 const filterButtons = [
     "btn-movies-latest",
@@ -35,18 +36,19 @@ const filterButtons = [
     "btn-tv-top-rated",
 ];
 
+// add event listener to search button
 searchButton.addEventListener("click", () => {
     search();
 });
 
 // add enter key listener to search input
-
 searchInput.addEventListener("keyup", (event) => {
     if (event.key === "Enter") {
         search();
     }
 });
 
+// search function, called when search button is clicked. 
 const search = () => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv" : "movie";
@@ -55,8 +57,8 @@ const search = () => {
     const searchValue = searchInput.value;
     searchInput.value = "";
 
-
     const language = document.querySelector("#language").value;
+    // fetch search results
     fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=" + apiKey + "&language=" + language + "&query=" + searchValue + "&page=1&include_adult=false")
         .then(response => response.json())
         .then(data => {
@@ -65,6 +67,7 @@ const search = () => {
             const resultContainer = document.querySelector(".card-container");
             resultContainer.innerHTML = "";
             results.forEach(result => {
+                // fetch additional data for each result, then create a card for each result. Additional data includes cast, recommendations, seasons, and videos (links).
                 fetch("https://api.themoviedb.org/3/" + type + "/" + result.id + "?api_key=" + apiKey + "&language=" + language + "&append_to_response=credits,recommendations,seasons,videos")
                     .then(response => response.json())
                     .then(data => {
@@ -124,6 +127,7 @@ pages.forEach(page => {
     });
 });
 
+// Main content fetch function. Called when a filter button is clicked, or when a page button is clicked. This handles all data fetches, except search.
 const getContent = () => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
@@ -145,6 +149,7 @@ const getContent = () => {
 
     console.log("Category: " + category);
     const language = document.querySelector("#language").value;
+    // fetch content based on type (movie or tv), category (latest, popular, top-rated), and page number.
     fetch("https://api.themoviedb.org/3/" + type + category + "?api_key=" + apiKey + "&language=" + language + "&page=" + page)
         .then(response => response.json())
         .then(data => {
@@ -153,6 +158,7 @@ const getContent = () => {
             const movieContainer = document.querySelector(".card-container");
             movieContainer.innerHTML = "";
             movies.forEach(movie => {
+                // fetch additional data for each movie, then create a card for each movie. Additional data includes cast, recommendations, seasons, and videos (links).
                 fetch("https://api.themoviedb.org/3/" + type + movie.id + "?api_key=" + apiKey + "&language=" + language + "&append_to_response=credits,recommendations,seasons,videos")
                     .then(response => response.json())
                     .then(data => {
@@ -164,18 +170,17 @@ const getContent = () => {
         });
 }
 
-
-
+// add event listeners to all filter buttons
 filterButtons.forEach((buttonId) => {
     const button = document.querySelector(`#${buttonId}`);
     button.addEventListener("click", () => {
+        // reset page number to 1 when a filter button is clicked, and then fetch content.
         page1.checked = true;
         getContent();
     });
 });
 
-
-
+// this function checks which category is selected, and returns the category name to be used in the fetch url.
 const getMovieCategory = () => {
     if (popularMovies.checked) {
         return "popular";
@@ -186,6 +191,7 @@ const getMovieCategory = () => {
     }
 }
 
+// this function checks which category is selected, and returns the category name to be used in the fetch url.
 const getTVCategory = () => {
     if (popularTV.checked) {
         return "popular";
@@ -196,7 +202,7 @@ const getTVCategory = () => {
     }
 }
 
-
+// this function creates a card for each movie or tv show. It is called in the fetch functions.
 const createContentCard = (content) => {
 
     const tv = document.getElementById("btn-tv");
@@ -216,12 +222,13 @@ const createContentCard = (content) => {
     const body = document.createElement("div");
     body.classList.add("card-body");
 
-
+    // this button group contains the link to info, cast and seasons pages.
     const btnGroup = document.createElement("div");
     btnGroup.classList.add("btn-group", "btn-group-sm", "card-btn-group");
     btnGroup.setAttribute("role", "group");
     btnGroup.setAttribute("aria-label", "Card button group");
 
+    // button for info page
     const btn1 = document.createElement("input");
     btn1.classList.add("btn-check");
     btn1.setAttribute("type", "radio");
@@ -235,6 +242,7 @@ const createContentCard = (content) => {
     btn1Label.textContent = "Info";
     btn1Label.setAttribute("for", "radio1-" + content.id);
 
+    // toggle info page when button is clicked
     btn1Label.addEventListener("click", () => {
         const descriptionContainer = contentCard.querySelector(".description-container");
         const castContainer = contentCard.querySelector(".cast-container");
@@ -247,6 +255,7 @@ const createContentCard = (content) => {
         btn3.removeAttribute("checked");
     });
 
+    // button for cast page
     const btn2 = document.createElement("input");
     btn2.classList.add("btn-check");
     btn2.setAttribute("type", "radio");
@@ -259,7 +268,7 @@ const createContentCard = (content) => {
     btn2Label.textContent = "Cast";
     btn2Label.setAttribute("for", "radio2-" + content.id);
 
-    // add listener to button
+    // toggle cast page when button is clicked
     btn2Label.addEventListener("click", () => {
         const descriptionContainer = contentCard.querySelector(".description-container");
         const castContainer = contentCard.querySelector(".cast-container");
@@ -273,6 +282,7 @@ const createContentCard = (content) => {
 
     });
 
+    // button for seasons page
     const btn3 = document.createElement("input");
     btn3.classList.add("btn-check");
     btn3.setAttribute("type", "radio");
@@ -290,7 +300,7 @@ const createContentCard = (content) => {
     }
     btn3Label.setAttribute("for", "radio3-" + content.id);
 
-    // add listener to button
+    // toggle seasons page when button is clicked
     btn3Label.addEventListener("click", () => {
         const descriptionContainer = contentCard.querySelector(".description-container");
         const castContainer = contentCard.querySelector(".cast-container");
@@ -303,6 +313,7 @@ const createContentCard = (content) => {
         btn3.setAttribute("checked", "");
     });
 
+    // choose which pages to show based on type of content (movie or tv show)
     if (type === "tv/") {
         btnGroup.append(
             btn1,
@@ -323,22 +334,27 @@ const createContentCard = (content) => {
 
     body.appendChild(btnGroup);
 
+    // movie / tv show title
     const titleElement = document.createElement("h4");
     titleElement.classList.add("card-title");
     titleElement.textContent = title;
     body.appendChild(titleElement);
 
+    // create description container
     const descriptionContainer = createDescription(content);
     body.appendChild(descriptionContainer);
 
+    // create cast container
     const castContainer = createCast(content);
     body.appendChild(castContainer);
 
+    // create seasons container for tv shows
     if (type === "tv/") {
         const seasonsContainer = createSeasons(content);
         body.appendChild(seasonsContainer);
     }
 
+    // create footer, which contains buttons for recommendations and trailer
     const cardFooter = document.createElement("div");
     cardFooter.classList.add("card-footer", "d-flex", "justify-content-around");
 
@@ -359,13 +375,15 @@ const createContentCard = (content) => {
     trailerBtn.classList.add("btn", "btn-outline-warning", "btn-sm");
     trailerBtn.textContent = "Trailer";
 
+    // if there is no trailer, disable the button
     if (content.videos.results.length === 0) {
         trailerBtn.classList.add("disabled");
         trailerBtn.innerHTML = "No trailer";
     }
 
+    // open trailer in new tab when button is clicked
     trailerBtn.addEventListener("click", () => {
-
+        // find the official trailer from all of the returned videos
         for (let i = 0; i <= content.videos.results.length; i++) {
             if (content.videos.results[i].type === "Trailer" && content.videos.results[i].official === true) {
                 window.open("https://www.youtube.com/watch?v=" + content.videos.results[i].key);
@@ -373,20 +391,6 @@ const createContentCard = (content) => {
             }
         }
     });
-
-    // create website button <-- removed, as I didn't like the look of it
-    /* const websiteBtn = document.createElement("button");
-    websiteBtn.classList.add("btn", "btn-outline-primary", "btn-sm");
-    websiteBtn.textContent = "Website";
-
-    if (content.homepage === "") {
-        websiteBtn.classList.add("disabled");
-        websiteBtn.innerHTML = "No website";
-    }
-
-    websiteBtn.addEventListener("click", () => {
-        window.open(content.homepage);
-    }); */
 
     footerBtnGroup.append(recommendationsBtn, trailerBtn);
 
@@ -398,6 +402,7 @@ const createContentCard = (content) => {
     return contentCard;
 }
 
+// create description container, which contains the description, IMDB rating, release date, and runtime
 const createDescription = (content) => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
@@ -429,6 +434,7 @@ const createDescription = (content) => {
     const genresContainer = document.createElement("div");
     genresContainer.classList.add("genres-container", "d-flex", "justify-content-center", "gap-1", "flex-wrap", "mt-2");
 
+    // create genre badges, and color them based on the genre
     const genres = content.genres;
     genres.forEach(genre => {
         const genreElement = document.createElement("span");
@@ -524,6 +530,7 @@ const createDescription = (content) => {
         genresContainer.appendChild(genreElement);
     });
 
+    // description of the movie or TV show
     const description = document.createElement("p");
     description.classList.add("card-text");
     description.textContent = content.overview;
@@ -532,6 +539,7 @@ const createDescription = (content) => {
     return container;
 }
 
+// create the cast table
 const createCast = (movie) => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
@@ -564,6 +572,7 @@ const createCast = (movie) => {
     return castContainer;
 }
 
+// create a single cast card/row
 const createCastCard = (castMember) => {
 
     const castRow = document.createElement("tr");
@@ -580,6 +589,7 @@ const createCastCard = (castMember) => {
     return castRow;
 }
 
+// create the seasons table
 const createSeasons = (content) => {
     const season = content.seasons;
     console.log(season);
@@ -610,6 +620,7 @@ const createSeasons = (content) => {
     return seasonContainer;
 }
 
+// create a single season card/row
 const createSeasonCard = (seasonMember) => {
     const seasonRow = document.createElement("tr");
     const seasonName = document.createElement("td");
@@ -625,6 +636,7 @@ const createSeasonCard = (seasonMember) => {
     return seasonRow;
 }
 
+// change the language of the content description, affects the title, description, and cast
 const changeLanguage = () => {
     const movieContainer = document.querySelector(".card-container");
     movieContainer.innerHTML = "";
