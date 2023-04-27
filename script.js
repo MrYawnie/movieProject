@@ -108,6 +108,7 @@ const getRecommendations = (content) => {
 
 
 movieType.addEventListener("click", () => {
+    page1.checked = true;
     getContent();
     tvSection.classList.add("display-none");
     movieSection.classList.remove("display-none");
@@ -115,32 +116,26 @@ movieType.addEventListener("click", () => {
 const tvType = document.querySelector("#btn-tv");
 
 tvType.addEventListener("click", () => {
+    page1.checked = true;
     getContent();
     movieSection.classList.add("display-none");
     tvSection.classList.remove("display-none");
 });
 
-// add event listeners to page buttons
-page1.addEventListener("click", () => {
-    getContent();
-});
+const pages = [
+    "page1",
+    "page2",
+    "page3",
+    "page4",
+    "page5",
+]
 
-page2.addEventListener("click", () => {
-    getContent();
+pages.forEach(page => {
+    const pageButton = document.querySelector("#" + page);
+    pageButton.addEventListener("click", () => {
+        getContent();
+    });
 });
-
-page3.addEventListener("click", () => {
-    getContent();
-});
-
-page4.addEventListener("click", () => {
-    getContent();
-});
-
-page5.addEventListener("click", () => {
-    getContent();
-});
-
 
 const getContent = () => {
     const tv = document.getElementById("btn-tv");
@@ -186,7 +181,10 @@ const getContent = () => {
 
 filterButtons.forEach((buttonId) => {
     const button = document.querySelector(`#${buttonId}`);
-    button.addEventListener("click", getContent);
+    button.addEventListener("click", () => {
+        page1.checked = true;
+        getContent();
+    });
 });
 
 
