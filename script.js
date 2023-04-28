@@ -1,4 +1,5 @@
 const apiKey = "3fa16246d70211b92d1c182141c872fa";
+const resultContainer = document.querySelector(".card-container");
 const movieSection = document.querySelector("#movie-type-selector");
 const tvSection = document.querySelector("#tv-type-selector");
 const popularMovies = document.querySelector("#btn-movies-popular");
@@ -12,22 +13,12 @@ const searchButton = document.querySelector("#search-button");
 const searchInput = document.querySelector("#search-input");
 const movieType = document.querySelector("#btn-movies");
 
-const page1 = document.querySelector("#page1");
-const page2 = document.querySelector("#page2");
-const page3 = document.querySelector("#page3");
-const page4 = document.querySelector("#page4");
-const page5 = document.querySelector("#page5");
+const loadMoreBtn = document.querySelector("#load-more");
+const backToTopBtn = document.querySelector("#back-to-top");
+
+let page = 1;
 
 const languageSelector = document.querySelector("#language");
-
-// arrays for event listeners below, to be used in a loop
-const pages = [
-    "page1",
-    "page2",
-    "page3",
-    "page4",
-    "page5",
-]
 
 const filterButtons = [
     "btn-movies-latest",
@@ -50,6 +41,15 @@ searchInput.addEventListener("keyup", (event) => {
     }
 });
 
+loadMoreBtn.addEventListener("click", () => {
+    page++;
+    getContent();
+});
+
+backToTopBtn.addEventListener("click", () => {
+    window.scrollTo(0, 0);
+});
+
 // search function, called when search button is clicked. 
 const search = () => {
     const tv = document.getElementById("btn-tv");
@@ -64,12 +64,11 @@ const search = () => {
 
     const language = document.querySelector("#language").value;
     // fetch search results
-    fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=" + apiKey + "&language=" + language + "&query=" + searchValue + "&page=1&include_adult=" + include_adult)
+    fetch("https://api.themoviedb.org/3/search/" + type + "?api_key=" + apiKey + "&language=" + language + "&query=" + searchValue + "&page=" + page + "&include_adult=" + include_adult)
         .then(response => response.json())
         .then(data => {
             console.log(data);
             const results = data.results;
-            const resultContainer = document.querySelector(".card-container");
             resultContainer.innerHTML = "";
             results.forEach(result => {
                 // fetch additional data for each result, then create a card for each result. Additional data includes cast, recommendations, seasons, and videos (links).
@@ -92,12 +91,11 @@ const getRecommendations = (content) => {
     console.log("Include adult: " + include_adult);
 
     const language = document.querySelector("#language").value;
-    fetch("https://api.themoviedb.org/3/" + type + content.id + "/recommendations" + "?api_key=" + apiKey + "&language=" + language + "&page=1&include_adult=" + include_adult)
+    fetch("https://api.themoviedb.org/3/" + type + content.id + "/recommendations" + "?api_key=" + apiKey + "&language=" + language + "&page=" + page + "&include_adult=" + include_adult)
         .then(response => response.json())
         .then(data => {
             console.log(data);
             const results = data.results;
-            const resultContainer = document.querySelector(".card-container");
             resultContainer.innerHTML = "";
             results.forEach(result => {
                 fetch("https://api.themoviedb.org/3/" + type + result.id + "?api_key=" + apiKey + "&language=" + language + "&append_to_response=credits,recommendations,seasons,videos")
@@ -113,7 +111,8 @@ const getRecommendations = (content) => {
 
 
 movieType.addEventListener("click", () => {
-    page1.checked = true;
+    resultContainer.innerHTML = "";
+    page = 1;
     getContent();
     tvSection.classList.add("display-none");
     movieSection.classList.remove("display-none");
@@ -121,18 +120,11 @@ movieType.addEventListener("click", () => {
 const tvType = document.querySelector("#btn-tv");
 
 tvType.addEventListener("click", () => {
-    page1.checked = true;
+    page = 1;
+    resultContainer.innerHTML = "";
     getContent();
     movieSection.classList.add("display-none");
     tvSection.classList.remove("display-none");
-});
-
-
-pages.forEach(page => {
-    const pageButton = document.querySelector("#" + page);
-    pageButton.addEventListener("click", () => {
-        getContent();
-    });
 });
 
 // Main content fetch function. Called when a filter button is clicked, or when a page button is clicked. This handles all data fetches, except search.
@@ -140,19 +132,7 @@ const getContent = () => {
     const tv = document.getElementById("btn-tv");
     const type = tv.checked ? "tv/" : "movie/";
     const category = type === "tv/" ? getTVCategory() : getMovieCategory();
-    
-    var page = 1;
-    if (page1.checked) {
-        page = 1;
-    } else if (page2.checked) {
-        page = 2;
-    } else if (page3.checked) {
-        page = 3;
-    } else if (page4.checked) {
-        page = 4;
-    } else if (page5.checked) {
-        page = 5;
-    }
+
     console.log("Page: " + page);
 
     const include_adult = document.querySelector("#include-adult").checked;
@@ -166,8 +146,7 @@ const getContent = () => {
         .then(data => {
             console.log(data);
             const movies = data.results;
-            const movieContainer = document.querySelector(".card-container");
-            movieContainer.innerHTML = "";
+            /* resultContainer.innerHTML = ""; */
             movies.forEach(movie => {
                 // fetch additional data for each movie, then create a card for each movie. Additional data includes cast, recommendations, seasons, and videos (links).
                 fetch("https://api.themoviedb.org/3/" + type + movie.id + "?api_key=" + apiKey + "&language=" + language + "&append_to_response=credits,recommendations,seasons,videos")
@@ -175,7 +154,7 @@ const getContent = () => {
                     .then(data => {
                         console.log(data);
                         const movieCard = createContentCard(data);
-                        movieContainer.appendChild(movieCard);
+                        resultContainer.appendChild(movieCard);
                     });
             });
         });
@@ -186,7 +165,8 @@ filterButtons.forEach((buttonId) => {
     const button = document.querySelector(`#${buttonId}`);
     button.addEventListener("click", () => {
         // reset page number to 1 when a filter button is clicked, and then fetch content.
-        page1.checked = true;
+        page = 1;
+        resultContainer.innerHTML = "";
         getContent();
     });
 });
@@ -452,87 +432,48 @@ const createDescription = (content) => {
         genreElement.classList.add("badge", "rounded-pill", "genre-badge");
         genreElement.textContent = genre.name;
 
+        // color the badge based on the genre
         switch (genre.name) {
             case "Action":
+            case "Drama":
+            case "Romance":
+            case "News":
                 genreElement.classList.add("bg-danger");
                 break;
             case "Adventure":
+            case "Mystery":
+            case "Sci-Fi & Fantasy":
+            case "Action & Adventure":
                 genreElement.classList.add("bg-info");
                 break;
             case "Animation":
-                genreElement.classList.add("bg-warning");
-                break;
             case "Comedy":
+            case "Reality":
                 genreElement.classList.add("bg-warning");
                 break;
             case "Crime":
+            case "Horror":
+            case "Thriller":
+            case "War & Politics":
                 genreElement.classList.add("bg-dark");
                 break;
             case "Documentary":
+            case "Music":
+            case "TV Movie":
+            case "Talk":
                 genreElement.classList.add("bg-secondary");
                 break;
-            case "Drama":
-                genreElement.classList.add("bg-danger");
-                break;
             case "Family":
+            case "Kids":
                 genreElement.classList.add("bg-primary");
                 break;
             case "Fantasy":
                 genreElement.classList.add("bg-success");
                 break;
             case "History":
-                genreElement.classList.add("bg-light");
-                break;
-            case "Horror":
-                genreElement.classList.add("bg-dark");
-                break;
-            case "Music":
-                genreElement.classList.add("bg-secondary");
-                break;
-            case "Mystery":
-                genreElement.classList.add("bg-info");
-                break;
-            case "Romance":
-                genreElement.classList.add("bg-danger");
-                break;
-            case "Science Fiction":
-                genreElement.classList.add("bg-info");
-                break;
-            case "Thriller":
-                genreElement.classList.add("bg-dark");
-                break;
-            case "TV Movie":
-                genreElement.classList.add("bg-secondary");
-                break;
-            case "War":
-                genreElement.classList.add("bg-dark");
-                break;
             case "Western":
-                genreElement.classList.add("bg-light");
-                break;
-            case "Action & Adventure":
-                genreElement.classList.add("bg-info");
-                break;
-            case "Kids":
-                genreElement.classList.add("bg-success");
-                break;
-            case "News":
-                genreElement.classList.add("bg-danger");
-                break;
-            case "Reality":
-                genreElement.classList.add("bg-warning");
-                break;
-            case "Sci-Fi & Fantasy":
-                genreElement.classList.add("bg-info");
-                break;
             case "Soap":
                 genreElement.classList.add("bg-light");
-                break;
-            case "Talk":
-                genreElement.classList.add("bg-secondary");
-                break;
-            case "War & Politics":
-                genreElement.classList.add("bg-dark");
                 break;
             default:
                 console.log(`Invalid genre entered: ${genre.name}`);
@@ -649,8 +590,8 @@ const createSeasonCard = (seasonMember) => {
 
 // change the language of the content description, affects the title, description, and cast
 const changeLanguage = () => {
-    const movieContainer = document.querySelector(".card-container");
-    movieContainer.innerHTML = "";
+    resultContainer.innerHTML = "";
+    page = 1;
     getContent();
 }
 
