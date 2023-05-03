@@ -438,12 +438,14 @@ const createDescription = (content) => {
             case "Drama":
             case "Romance":
             case "News":
+            case "War":
                 genreElement.classList.add("bg-danger");
                 break;
             case "Adventure":
             case "Mystery":
             case "Sci-Fi & Fantasy":
             case "Action & Adventure":
+            case "Science Fiction":
                 genreElement.classList.add("bg-info");
                 break;
             case "Animation":
